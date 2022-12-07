@@ -10,7 +10,7 @@ export default function UsersPage() {
 
             <Table className='table-hover table-striped table-sm'>
 
-
+            
             <thead>
                 <tr>
                 <th>#</th>
