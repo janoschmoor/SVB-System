@@ -22,12 +22,36 @@ export default interface ICourse {
     saison?: "august" | "november" | "march";
     year: string;
 
-    absences: Array<Array<boolean>>; // maybe better subcollections also for invoice stuff
+    absences: any; // subcollection
     promotions: Array<boolean>;
 
     //  Defaulted by Settings
     settings: ICourseSettings;
 
+}
+
+export interface ICoursePublic {
+    readonly id: string;
+    code: string;
+    category: string;
+    target_group: Array<"aqua" | "adult" | "high_diving" | "diverse" | "adolescent" | "elki" | "child">;
+    state: "active" | "in_planning" | "paused" | "complete";
+
+    pool: IPoolPreview;
+    reservations: number;
+    coaches: Array<IUserPreview>;
+    duration: string;
+    duration_numeric: number;
+    dates: Array<IDate>;
+    weekday?: string;
+    weekday_numeric?: number;
+    time?: string;
+    time_numeric?: number;
+    saison?: "august" | "november" | "march";
+    year: string;
+
+    //  Defaulted by Settings
+    settings: ICourseSettings;
 }
 
 export interface ICoursePreview {
