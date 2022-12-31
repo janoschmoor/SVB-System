@@ -25,13 +25,13 @@ export default interface IUser {
     city: string;
     country_ISO2: string;
     country: string;
-    portrait_url: string | null;
+    portrait_url: string | null;
     note?: string;
 
     phone_numbers: IPhoneNumbers;
     date_of_birth: string;
-    date_of_birth_numeric: number;
-    email: string;
+    date_of_birth_numeric: number | null;
+    email: string | undefined;
     preffered_language: "d" | "f" | "e";
 
     //  LinkedAccounts
@@ -94,14 +94,5 @@ export interface IUserPreview {
     readonly first_name: string;
     readonly last_name: string;
     readonly date_of_birth: string;
-    readonly phone_numbers: IPhoneNumbers;
-}
-
-export interface IUserPreviewAdmin {
-    readonly id: string;
-    readonly first_name: string;
-    readonly last_name: string;
-    readonly date_of_birth: string;
-    readonly status: "active" | "passive";
-    readonly email: string;
+    readonly phone_number: string;
 }

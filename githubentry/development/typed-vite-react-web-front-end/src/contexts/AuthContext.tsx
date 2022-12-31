@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, signInWithEmailAndPassword, signOut, User, UserCredential } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, signInWithEmailAndPassword, signOut, Unsubscribe, User, UserCredential } from 'firebase/auth';
 import React, { useContext, useEffect, useState } from 'react'
 import { auth } from '../firebase';
 
@@ -21,12 +21,9 @@ const AuthContext = React.createContext<IProviderValues>({
 const AuthProvider = ({children}: {children: any}) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 
-  
   useEffect(() => {
-    // console.warn("AuthUseEffect")
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // console.warn("AuthOnAuthStateChanged", user)
-      setCurrentUser(user); 
+      setCurrentUser(user);
     })
     return unsubscribe;
   }, []);

@@ -6,7 +6,7 @@ export default function Signup(props: any) {
   const emailRef = createRef<HTMLInputElement>();
   const passwordRef = createRef<HTMLInputElement>();
   const passwordConfirmRef = createRef<HTMLInputElement>();
-  const { signup } = useAuth();
+  const { verifyEmail, signup } = useAuth();
   const [ error, setError ] = useState("")
   const [ loading, setLoading ] = useState(false)
 //   const history = useHistory()
@@ -28,9 +28,17 @@ function handleSubmit(e:React.FormEvent) {
         setError("")
         if (emailRef.current && passwordRef.current) {
             setLoading(true)
-            signup(emailRef.current.value, passwordRef.current.value).then(() => {
+            signup(emailRef.current.value, passwordRef.current.value).then((user:any) => {
                 setError("");
-                setLoading(false)
+                setLoading(false);
+
+                verifyEmail(user).then((arg:any) => {
+                    setLoading(false);
+                }).catch((err:any) => {
+                    console.error(err)
+                    setError(err.message);
+                    setLoading(false);
+                }) 
 
             }).catch((err: any) => {
                 var errorMessage = err.message;

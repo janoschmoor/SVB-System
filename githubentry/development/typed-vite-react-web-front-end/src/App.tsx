@@ -6,10 +6,15 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
-import HomePage from './pages/Home';
-import ErrorPage from './pages/ErrorPage';
-import Admin from './pages/Admin';
-import UsersPage from './pages/Admin/Users';
+import { lazy, Suspense } from 'react';
+
+const HomePage = lazy(() => import('./pages/Home'));
+import LoadingPage from "./pages/Loading";
+const ErrorPage = lazy(() => import('./pages/ErrorPage'));
+const Admin = lazy(() => import('./pages/Admin'));
+const UsersPage = lazy(() => import('./pages/Admin/Users'));
+const ProfilePage = lazy(() => import('./pages/Profile'));
+
 
 const router = createBrowserRouter([
   {
@@ -32,21 +37,28 @@ const router = createBrowserRouter([
     element: <UsersPage />,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/profil",
+    element: <ProfilePage />,
+    errorElement: <ErrorPage />,
+  },
 ]);
 
 function App() {
 
   return (
-    <AuthProvider>
+    <Suspense fallback={<LoadingPage />}>
+      <AuthProvider>
 
-      {/* <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />}/>
-        </Routes>
-      </BrowserRouter> */}
-      <RouterProvider router={router} />
+        {/* <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />}/>
+          </Routes>
+        </BrowserRouter> */}
+        <RouterProvider router={router} />
 
-    </AuthProvider>
+      </AuthProvider>
+    </Suspense>
   )
 }
 

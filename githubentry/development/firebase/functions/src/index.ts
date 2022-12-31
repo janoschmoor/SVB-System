@@ -1,14 +1,14 @@
-import * as functions from "firebase-functions";
-const cors = require('cors')({origin: false});
+const { initializeApp } = require('firebase-admin/app');
+initializeApp();
 
-// // Start writing functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-export const helloWorld = functions.https.onRequest((request, response) => {
-  cors(request, response, () => {
-      // your function body here - use the provided req and res from cors
-      functions.logger.info("Hello logs!", {structuredData: true});
-      response.set("Access-Control-Allow-Origin", "*")
-      response.send("Hello from Firebase!");
-  })
-});
+import { populateFirestoreWithUsers } from "./functions/callable/populateFirestoreWithUsers";
+import { updateUser } from "./functions/callable/updateUser";
+import { processSignUp } from "./functions/firestore/processSignUp";
+
+export {
+  populateFirestoreWithUsers,
+  updateUser,
+  processSignUp,
+}
+
+

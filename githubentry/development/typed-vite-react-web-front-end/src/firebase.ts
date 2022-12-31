@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app"
-import { getAuth } from "firebase/auth"
+import { getAuth, connectAuthEmulator } from "firebase/auth"
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
@@ -21,5 +21,6 @@ export default app;
 
 if (useEmulator) {
     connectFirestoreEmulator(firestore, 'localhost', 8081);
-    connectFunctionsEmulator(functions, "localhost", 5001);
+    connectFunctionsEmulator(functions, 'localhost', 5001);
+    connectAuthEmulator(auth, 'http://localhost:9099');
 }
