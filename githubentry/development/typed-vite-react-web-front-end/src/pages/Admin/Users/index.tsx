@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState, useRef } from 'react'
 import LayoutComponent from '../../../components/Layout';
 import { Container, Table, Modal, Button, Alert, Row, Col, Form, FormControl, ButtonGroup, Toast, ToastContainer } from 'react-bootstrap';
-import { getCollectionRealTime } from '../../../services/firestore';
+import { getCollectionRealTime } from '../../../services/firestore/firestore';
 import { updateUser } from '../../../services/functions';
 
 import IUser, { IUserPreview } from '../../../interfaces/user/user';

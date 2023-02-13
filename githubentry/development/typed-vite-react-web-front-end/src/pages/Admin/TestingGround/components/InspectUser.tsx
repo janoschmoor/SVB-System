@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Form, Button, Nav, Tab, Tabs, Badge } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container'
-import IUser from '../../interfaces/user/user';
+import IUser from '../../../../interfaces/user/user';
 
 export default function InspectUser(props: {user: IUser, editing: boolean}) {
 

@@ -7,9 +7,11 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import { lazy, Suspense } from 'react';
+import SystemProvider from './contexts/systemContext';
 
 const HomePage = lazy(() => import('./pages/Home'));
-import LoadingPage from "./pages/Loading";
+const LoadingPage = lazy(() => import('./pages/Loading'));
+const TestingGroundPage = lazy(() => import('./pages/Admin/TestingGround'));
 const ErrorPage = lazy(() => import('./pages/ErrorPage'));
 const Admin = lazy(() => import('./pages/Admin'));
 const UsersPage = lazy(() => import('./pages/Admin/Users'));
@@ -38,8 +40,18 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "/admin/testing_ground",
+    element: <TestingGroundPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "/profil",
     element: <ProfilePage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/loadingpage",
+    element: <LoadingPage />,
     errorElement: <ErrorPage />,
   },
 ]);
@@ -49,17 +61,14 @@ function App() {
   return (
     <Suspense fallback={<LoadingPage />}>
       <AuthProvider>
+        <SystemProvider>
 
-        {/* <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage />}/>
-          </Routes>
-        </BrowserRouter> */}
-        <RouterProvider router={router} />
+          <RouterProvider router={router} />
 
+        </SystemProvider>
       </AuthProvider>
     </Suspense>
   )
 }
 
-export default App
+export default App;

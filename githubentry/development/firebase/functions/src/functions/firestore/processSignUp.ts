@@ -8,35 +8,27 @@ const { getAuth } = require('firebase-admin/auth');
 const firestore = admin.firestore();
 
 export const processSignUp = functions.auth.user().onCreate((user) => {
-
     return new Promise((resolve, reject) => {
   
       const customClaims = {
-        admin: false,
-        coach: false,
-        client: true,
-        accessLevel: 0
+        roles: [],
+        access_level: 0
       };
     
       getAuth().setCustomUserClaims(user.uid, customClaims).then(() => {
         const batch = firestore.batch();
-  
-        const newUser: IUser = getNewUser(user);
-  
-        // Add your write operations to the batch
+        const newUser: IUser = getNewUser(Object.assign({first_name: "", last_name: ""}, user));
+
         batch.set(firestore.doc('/users/' + user.uid), newUser);
-        // batch.set(firestore.doc('/users_public_client/' + user.uid), newUser);
-  
-        // Commit the batch
         batch.commit()
-          .then(() => {
-            resolve("Successful setCustemUserClaims&&batchWrite")
+          .then((res: any) => {
+            resolve(res)
           })
-          .catch(() => {
-            reject("Unable to batchWrite")
+          .catch((err:any) => {
+            reject(err)
           });
-      }).catch(() => {
-        reject("Unable to setCustomUserClaims")
+      }).catch((e: any) => {
+        reject(e)
       })
     })
   });

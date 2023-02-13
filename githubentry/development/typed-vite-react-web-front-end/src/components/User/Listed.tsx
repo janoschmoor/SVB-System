@@ -4,8 +4,6 @@ import { IUserPreviewAdmin } from '../../interfaces/user/user';
 
 export default function ListedUserPreview(props: {user: IUserPreviewAdmin, onClick: any}) {
 
-
-
     return (
         <tr onClick={() => {props.onClick(props.user)}}>
             <td>{props.user.status == "active" ? <CheckCircle color="rgb(40, 200, 10)"/> : <PauseCircle color="rgb(250, 200, 10)"/>}</td>

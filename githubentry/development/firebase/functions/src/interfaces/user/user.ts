@@ -5,11 +5,16 @@ import IPhoneNumbers from "../utility/phone";
 
 export default interface IUser {
     // admin level details
-    readonly id: string;
-    roles: Array<"client" | "coach" | "admin">;
+    id: string;
+    roles: Array<string>;
+    isAdmin: boolean;
+    isCoach: boolean;
+    isClient: boolean;
     access_level: number;
     created_at_numeric: number;
-    status: "active" | "passive";
+    last_update_numeric: number;
+    status: "created" | "active" | "error" | "issue";
+    isSelfConnected: boolean,
     discount?: number;
     special_pass?: string;
     special_pass_valid_until?: number;
@@ -35,8 +40,9 @@ export default interface IUser {
     preffered_language: "d" | "f" | "e";
 
     //  LinkedAccounts
-    parent: IUserPreview | null;
-    children: Array<IUserPreview> | null;
+    parents: Array<IUserPreview>;
+    parentIds: Array<string>;
+    children: Array<IUserPreview>;
     
     // ChatRooms
     new_messages: Array<IMessage>

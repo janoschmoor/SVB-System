@@ -1,14 +1,16 @@
 const { initializeApp } = require('firebase-admin/app');
 initializeApp();
 
-import { populateFirestoreWithUsers } from "./functions/callable/populateFirestoreWithUsers";
-import { updateUser } from "./functions/callable/updateUser";
+import { initFirestore } from "./functions/callable/initFirestore";
+import { updateEntity } from "./functions/callable/updateEntity";
 import { processSignUp } from "./functions/firestore/processSignUp";
+import { setUserAccessLevel } from "./functions/callable/setUserAccessLevel";
 
 export {
-  populateFirestoreWithUsers,
-  updateUser,
+  initFirestore,
+  updateEntity,
   processSignUp,
+  setUserAccessLevel,
 }
 
 

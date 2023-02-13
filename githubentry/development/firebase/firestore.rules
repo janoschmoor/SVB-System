@@ -1,9 +1,66 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read: if true;
+
+    function isAuthenticated() {
+      return request.auth != null && request.auth.token.email_verified;
+    }
+    function hasAccessLevel(level) {
+      return request.auth.token.access_level>=level;
+    }
+    function verifyFields(required, optional) {
+      let allAllowedFields = required.concat(optional);
+      return (request.resource.data.diff(resource.data).affectedKeys().hasAll(required) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(allAllowedFields));
+    }
+
+    
+
+    
+    match /users/{userId} {
+
+      // USER
+
+      function isParent() {
+        return resource.data.parentIds.hasAny([request.auth.uid]);
+      }
+      function isOwner() {
+        return request.auth.uid == resource.data.id;
+      }
+      function isOwnerOrAdmin() {
+        return isOwner() || hasAccessLevel(2000);
+      }
+      function canUpdateUserData() {
+        let requiredFields = ['last_update_numeric'];
+        let clientAllowedFields = ['form_of_adress', 'first_name', 'last_name', 'street', 'house_number', 'postal_code', 'city', 'country', 'country_ISO2', 'portrait_url', 'phone_numbers', 'date_of_birth', 'date_of_birth_numeric', 'preffered_language', 'availability', 'invoice_delivery'];
+        let adminAllowedFields = clientAllowedFields.concat(['roles', 'access_level', 'status', 'isSelfConnected', 'discount', 'special_pass', 'special_pass_reduction', 'special_pass_valid_until', 'note', 'email', 'parent', 'children', 'new_messages', 'courses']);
+        return ((isOwner() || isParent()) && verifyFields(
+            requiredFields,
+            clientAllowedFields
+          ))
+          || (hasAccessLevel(2000) && verifyFields(
+            requiredFields,
+            adminAllowedFields
+          ))
+      }
+
+      
+      allow read: if (isAuthenticated() && (isOwnerOrAdmin() || isParent()));
+      allow create: if isAuthenticated() && hasAccessLevel(2000);
+      allow update: if isAuthenticated() && canUpdateUserData();
+      allow delete: if isAuthenticated() && hasAccessLevel(2000);
+
+      match /invoices/{invoiceId} {
+        allow read: if isOwnerOrAdmin();
+        allow write: if hasAccessLevel(2000);
+      }
+    }
+
+
+
+    match /SYSTEM/{documentId} {
+      allow read: if documentId == 'default';
       allow write: if false;
     }
+
   }
 }
