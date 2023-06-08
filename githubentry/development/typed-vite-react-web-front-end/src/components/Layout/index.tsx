@@ -13,6 +13,7 @@ import { Card, Col, Collapse, FormControl, NavbarBrand, NavItem, NavLink, Row } 
 import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
 import UserPreviewComponent from './components/UserPreviewComponent';
 import MenuCollapsed from './components/MenuCollapsed';
+import CollapseWrapper from '../Wrappers/CollapseWrapper';
 
 export default function LayoutComponent({children}: {children: any}) {
     const { currentUser } = useAuth();
@@ -29,31 +30,29 @@ export default function LayoutComponent({children}: {children: any}) {
             <Container fluid>
                 <Row className="row justify-content-center">
                     <Col className="col-auto">
-
-                        {/* <div style={{ minWidth: "10" }}>idk</div> */}
-                        <div style={{minWidth: 'auto' }}>
-                            
-                            <MenuCollapsed show={menuIsOpen} />
-                        </div>
-                    
+                        <CollapseWrapper show={menuIsOpen} dimension="width">
+                            <MenuCollapsed/>
+                        </CollapseWrapper>
                     </Col>
+                    
                     <Col>
                         <Navbar className="sticky-top shadow-sm p-3 mb-2 bg-white rounded">
 
-                            <Button variant="outline-primary" className='me-2' onClick={toggleMenu}>{menuIsOpen ? <ChevronLeft></ChevronLeft> : <List></List>}</Button>
-                            <NavbarBrand>SVB</NavbarBrand>
+                            {/* <Button variant="outline-primary" className='me-2' onClick={toggleMenu}>{menuIsOpen ? <ChevronLeft></ChevronLeft> : <List></List>}</Button> */}
+                            <NavbarBrand>SVB Interner Bereich</NavbarBrand>
 
                             <Nav
                                 className="me-auto my-2 my-lg-0"
                                 style={{ maxHeight: '100px' }}
                                 navbarScroll
                             >
-                                <NavLink href="#action1">Home</NavLink>
-                                <NavLink href="#action2">Link</NavLink>
+                                <NavLink onClick={() => {navigate("/profil")}}>Profil</NavLink>
+                                <NavLink onClick={() => {navigate("/admin/data-manager")}}>DatenManager</NavLink>
+                                <NavLink onClick={() => {navigate("/admin/course-creator")}}>Kurse</NavLink>
                                 
 
                             </Nav>
-                            <div className='rounded mr'><Bell></Bell></div>
+                            <div className='me-2'><Bell></Bell></div>
                             <UserPreviewComponent openAuth={() => {toggleAuth()}} />
 
                         </Navbar>

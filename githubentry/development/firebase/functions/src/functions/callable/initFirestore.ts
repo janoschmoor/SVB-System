@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import IUser from "../../interfaces/user/user";
-import { SYSTEM_DEFAULT_STATE } from "../../util/systemDefaultState";
+import { SYSTEM_CALENDAR, SYSTEM_COURSEINSTRUCTIONS, SYSTEM_COURSETEMPLATES } from "../../util/systemDefaultState";
 import getNewUser from "../../util/testNewUser";
 
 const cors = require('cors')({origin: true});
@@ -8,7 +8,7 @@ const admin = require('firebase-admin');
 const firestore = admin.firestore();
 
 export const initFirestore = functions.https.onRequest((request, response) => {
-  const last_names = ["Moor", "Heyn", "Paganini", "Georgy", "Schwyzer", "Zihlmann", "Hamel", "Merkle", "Wittreck", "Blumenbach", "Greenleaf", "Miotto", "Lüthy", "Frederix"]
+  const last_names = ["Moor", "Heyn", "Paganini", "Georgy", "Schwyzer", "Zihlmann", "Hamel", "Merkle", "Wittreck", "Blumenbach", "Greenleaf", "Miotto", "Lüthy", "Frederix", "Müller"]
   const first_names = ["Janosch", "René", "Micol", "Nicolas", "Fabian", "David", "Jacques", "Sinan", "Raphael", "Tanner", "Davide", "Jonas", "Victor"]
   const mailproviders = ["mail", "gmail", "yallo", "bluewin", "gmx", "jk"]  
   cors(request, response, () => {
@@ -26,7 +26,9 @@ export const initFirestore = functions.https.onRequest((request, response) => {
         batch.set(firestore.doc('/users/' + newUser.id), newUser);
       }
 
-      batch.set(firestore.doc('/SYSTEM/default'), SYSTEM_DEFAULT_STATE);
+      batch.set(firestore.doc('/SYSTEM/calendar'), SYSTEM_CALENDAR);
+      batch.set(firestore.doc('/SYSTEM/courseInstructions'), SYSTEM_COURSEINSTRUCTIONS);
+      batch.set(firestore.doc('/SYSTEM/courseTemplates'), SYSTEM_COURSETEMPLATES);
   
       batch.commit()
         .then(() => {

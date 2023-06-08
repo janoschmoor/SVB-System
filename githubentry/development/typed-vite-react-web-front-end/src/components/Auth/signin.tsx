@@ -35,8 +35,7 @@ function handleSubmit(e:React.FormEvent) {
 
   return (
     <>
-      <Card>
-        <Card.Body>
+      <Card body>
           <h2 className="text-center mb-4">Einloggen</h2>
           {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
@@ -52,7 +51,6 @@ function handleSubmit(e:React.FormEvent) {
                   Einloggen
                 </Button>
             </Form>
-        </Card.Body>
       </Card>
       <div className="w-100 text-center mt-2">
         Noch kein Konto? <span className="link-primary" onClick={() => {props.switchFuntion(true)}}>Konto einrichten</span>

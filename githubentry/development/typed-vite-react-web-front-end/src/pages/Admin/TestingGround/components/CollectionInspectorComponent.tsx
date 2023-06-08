@@ -6,7 +6,7 @@ import { loadCollection, loadCollectionSnapshot, loadDocument } from "../../../.
 import { Unsubscribe } from "firebase/firestore";
 import ListedEntityPreview from "./ListedEntity";
 import EntityDetails from "./EntityDetails";
-import { useSystem } from "../../../../contexts/systemContext";
+import { useSystem } from "../../../../contexts/SystemContext";
 import TableHeadComponent from "./TableHeadComponent";
 import FormRange from "react-bootstrap/esm/FormRange";
 import { buildConstraintStringDynamically } from "../../../../services/firestore/util/constraintBuilder";
@@ -425,7 +425,7 @@ export default function CollectionInspectorComponent(props: {settings: {
                                 {
                                     tableSettings ? 
                                     queriedEntities.map((entity: any, index: number) => {
-                                            return <ListedEntityPreview key={entity.id} tableSettings={tableSettings} type={queryCollection} entity={entity} onClick={() => {inspectEntity(index)}} />
+                                            return <ListedEntityPreview systemstate={SystemState} key={entity.id} tableSettings={tableSettings} type={queryCollection} entity={entity} onClick={() => {inspectEntity(index)}} />
                                         })
                                     :
                                         <tr></tr>

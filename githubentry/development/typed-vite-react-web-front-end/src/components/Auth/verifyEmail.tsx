@@ -3,11 +3,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Alert } from "react-bootstrap"
 import { useNavigate } from 'react-router-dom';
 
-export default function VerifyEmail() {
+export default function VerifyEmail( props : {switchFunction: Function}) {
     const navigate = useNavigate();
     const [ error, setError ] = useState("")
     const [ loading, setLoading ] = useState(false)
-    const { verifyEmail, currentUser } = useAuth();
+    const { verifyEmail, currentUser, signout } = useAuth();
 
     const handleVerification = () => {
         setLoading(true);
@@ -29,7 +29,7 @@ export default function VerifyEmail() {
             {error && <Alert variant="danger">{error}</Alert>}
             <button type="button" className='btn w-100 btn-outline-primary' onClick={() => {handleVerification()}}>Erneut senden</button>
             <div className="w-100 text-center mt-2">
-                Ergänzen Sie ihr <span className="link-primary" onClick={() => {navigate('/profil')}}>Profil</span>
+                Email bestätigt? Dann können Sie sich jetzt <span className="link-primary" onClick={() => {props.switchFunction(true);signout()}}>Anmelden</span>
             </div>
         </>
     )

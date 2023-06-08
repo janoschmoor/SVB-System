@@ -5,37 +5,37 @@ const getNewUser = (user: any): IUser => {
     return {
       id: user.uid,
       roles: ["client"],
-      isAdmin: Math.random() > 0.97,
-      isCoach: Math.random() > 0.9,
-      isClient: true,
-      access_level: 0,
-      created_at_numeric: Date.now(),
-      last_update_numeric: Date.now(),
-      isSelfConnected: false,
+      is_admin: Math.random() > 0.97,
+      is_coach: Math.random() > 0.9,
+      is_client: Math.random() > 0.5,
+      sallary: `${Math.floor(Math.random()*9000)/100}`,
+      access_level: Math.floor(Math.random()*3)*1000,
+      created_at: Date.now()-1000000000*Math.random(),
+      last_update: Date.now(),
+      linked: Math.random()>0.4,
   
-      form_of_adress: "",
+      form_of_adress: Math.random() > 0.5 ? "Herr" : "Frau",
       first_name: user.first_name,
       last_name: user.last_name,
-      street: "",
-      house_number: "",
-      postal_code: "",
-      city: "",
-      country_ISO2: "",
-      country: "",
+      street: "Wenkenstrasse",
+      house_number: "86",
+      postal_code: "4125",
+      city: "Riehen",
+      country_ISO2: "CH",
+      country: "Schweiz",
       portrait_url: null,
   
-      phone_numbers: { default: "" },
-      // date_of_birth: `${1+Math.floor(Math.random()*31)}.${1+Math.floor(Math.random()*12)}.${2000+Math.floor(Math.random()*10)}`,
-      date_of_birth: new Date(t).toLocaleDateString(),
-      date_of_birth_numeric: t,
+      phone_numbers: ["079"+Math.floor(Math.random()*10000000).toString()],
+      phone_number: Math.random()>0.3 ? "079"+Math.floor(Math.random()*10000000).toString() : "",
+      date_of_birth: t,
       email: user.email ? user.email : "",
-      preffered_language: "d",
+      preffered_language: Math.random() > 0.5 ? "d" : "e",
   
       status: Math.random() < 0.9 ? Math.random() < 0.8 ? "created" : "issue" : Math.random() < 0.8 ? "active" : "error",
   
       //  LinkedAccounts
       parents: [],
-      parentIds: [],
+      parent_ids: [],
       children: [],
       
       // ChatRooms
@@ -47,7 +47,6 @@ const getNewUser = (user: any): IUser => {
           time_numeric: Date.now(),
         }
       ],
-      chatrooms: [],
       availability: "always",
       
       // Courses
@@ -55,7 +54,6 @@ const getNewUser = (user: any): IUser => {
       
       //  Invoices
       invoice_delivery: "email",
-      invoices: [],
     }
   }
 

@@ -1,24 +1,24 @@
-import { IMessage, IChatRoomPreview } from "../chatroom/chatroom";
+import { IMessage } from "../chatroom/chatroom";
 import { ICoursePreview } from "../course/course";
-import { IInvoicePreview } from "../invoice/invoice";
 import IPhoneNumbers from "../utility/phone";
 
 export default interface IUser {
     // admin level details
     id: string;
     roles: Array<string>;
-    isAdmin: boolean;
-    isCoach: boolean;
-    isClient: boolean;
+    is_admin: boolean;
+    is_coach: boolean;
+    is_client: boolean;
     access_level: number;
-    created_at_numeric: number;
-    last_update_numeric: number;
+    created_at: number;
+    last_update: number;
     status: "created" | "active" | "error" | "issue";
-    isSelfConnected: boolean,
+    linked: boolean,
     discount?: number;
     special_pass?: string;
     special_pass_valid_until?: number;
-    special_pass_reduction?: string; // representing e.g. "15.00" CHF 
+    special_pass_reduction?: string; // representing e.g. "15.00" CHF
+    sallary: string;
 
     // personal
     form_of_adress: string;
@@ -33,28 +33,28 @@ export default interface IUser {
     portrait_url: string | null;
     note?: string;
 
-    phone_numbers: IPhoneNumbers;
-    date_of_birth: string;
-    date_of_birth_numeric: number | null;
+    phone_numbers: Array<string>;
+    phone_number: string;
+    date_of_birth: number;
     email: string | undefined;
     preffered_language: "d" | "f" | "e";
 
     //  LinkedAccounts
     parents: Array<IUserPreview>;
-    parentIds: Array<string>;
+    parent_ids: Array<string>;
     children: Array<IUserPreview>;
     
     // ChatRooms
     new_messages: Array<IMessage>
-    chatrooms: Array<IChatRoomPreview | null>
-    availability: "none" | "during_work" | "always"; // system notifications are (allways) allowed (see settings)
+    // chatrooms: Array<IChatRoomPreview | null>
+    availability: "never" | "during_work" | "always"; // system notifications are (allways) allowed (see settings)
     
     // Courses
     courses: Array<ICoursePreview>;
     
     //  Invoices
     invoice_delivery: "post" | "email";
-    invoices: Array<IInvoicePreview>;
+    // invoices: Array<IInvoicePreview>;
 
 }
 

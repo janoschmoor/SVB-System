@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react'
-import { Badge, Button } from 'react-bootstrap';
-import { ArrowsAngleExpand, CheckCircle, CheckCircleFill, CheckSquareFill, DashSquareFill, ExclamationTriangle, HourglassSplit, Pause, PauseBtnFill, PauseCircle, PauseCircleFill, XCircle } from 'react-bootstrap-icons';
+import { Alert, Badge, Button } from 'react-bootstrap';
+import { ArrowsAngleExpand, Chat, CheckCircle, CheckCircleFill, CheckSquareFill, DashSquareFill, ExclamationTriangle, HourglassSplit, Pause, PauseBtnFill, PauseCircle, PauseCircleFill, TelephoneOutbound, XCircle } from 'react-bootstrap-icons';
 
-export default function ListedEntityPreview(props: {tableSettings: Array<any>, entity: any, onClick: any, type: string}) {
+export default function ListedEntityPreview(props: {systemstate: any, tableSettings: Array<any>, entity: any, onClick: any, type: string}) {
 
     const [ didUpdate, setDidUpdate ] = useState(false);
 
@@ -40,12 +40,31 @@ export default function ListedEntityPreview(props: {tableSettings: Array<any>, e
                             if (el.type == "boolean") {
                                 return <td key={el.key}>{eval(`props.entity.${el.key}`) ? <CheckCircleFill color='rgb(0,200,0)' /> : <XCircle color='rgb(200,0,0)' /> }</td>
                             }
+                            if (el.type == "select") {
+                                var prototype = eval(`props.systemstate.query.${props.type}`).keys.find((k: any) => k.key == el.key);
+                                if (!prototype) {return <Alert variant='danger'>Prototype not found</Alert>}
+                                var option = prototype.selectOptions.find((o: any) => {o.key == eval(`props.entity.${el.key}`)});
+                                if (!option) {return <Alert variant='danger'>Option not found</Alert>}
+                                return <td key={el.key}>{option.disp}</td>
+                            }
                             return <td key={el.key}>{eval(`props.entity.${el.key}`)}</td>
                         })    
                     :
                         <td><ExclamationTriangle color='rgb(255,100,100)'/></td>
                     }
-                    <td><Button variant='outline-secondary' size="sm"><ArrowsAngleExpand /></Button></td>
+                    <td>
+                        {
+                            props.entity.phone_number && props.entity.phone_number != "" ?
+                                    <Button variant='outline-success' onClick={(e: any) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        window.open(`tel:${props.entity.phone_number}`);
+                                    }} size="sm"><TelephoneOutbound /></Button>
+                                :
+                                    <Button variant='outline-secondary' size="sm"><Chat /></Button>
+
+                        }
+                    </td>
                 </>
             </tr>
         )

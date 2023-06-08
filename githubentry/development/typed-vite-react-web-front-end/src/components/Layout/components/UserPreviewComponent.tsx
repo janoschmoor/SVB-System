@@ -3,23 +3,14 @@ import { useAuth } from "../../../contexts/AuthContext";
 
 export default function UserPreviewComponent(props: {openAuth: Function}) {
     
-    const { currentUser } = useAuth();
+    const { currentUser, currentUserData } = useAuth();
   
     return (
         currentUser ?
             <div className="d-flex align-items-center" onClick={() => {props.openAuth()}}>
                 <img src={currentUser.photoURL ? currentUser.photoURL : undefined}></img>
                 <>
-                    <Row>
-                        <Col>
-                            User N.
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            Super Admin
-                        </Col>
-                    </Row>
+                    {currentUserData ? `${currentUserData?.first_name} ${currentUserData?.last_name}`: "Laden..."}
                 </>
             </div>
         :

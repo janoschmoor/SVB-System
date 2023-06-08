@@ -5,14 +5,15 @@ export const NewUser = (): IUser => {
     return {
         id: "",
         roles: ["client"],
-        isAdmin: false,
-        isCoach: false,
-        isClient: true,
+        is_admin: false,
+        is_coach: false,
+        is_client: true,
+        sallary: "",
         access_level: 0,
-        created_at_numeric: Date.now(),
-        last_update_numeric: Date.now(),
+        created_at: Date.now(),
+        last_update: Date.now(),
         status: "created",
-        isSelfConnected: false,
+        linked: false,
         form_of_adress: "",
         first_name: "",
         last_name: "",
@@ -23,20 +24,18 @@ export const NewUser = (): IUser => {
         country_ISO2: "",
         country: "",
         portrait_url: null,
-        phone_numbers: {default: ""},
-        date_of_birth: "",
-        date_of_birth_numeric: null,
+        phone_numbers: [],
+        phone_number: "",
+        date_of_birth: 0,
         email: undefined,
         preffered_language: "d",
         parents: [],
-        parentIds: [],
+        parent_ids: [],
         children: [],
         new_messages: [],
-        chatrooms: [],
-        availability: "none",
+        availability: "never",
         courses: [],
         invoice_delivery: "post",
-        invoices: []
     }
 }
 export const NewCourse: ICourse = {
@@ -55,14 +54,16 @@ export const NewCourse: ICourse = {
     },
     clients: [],
     coaches: [],
-    duration: "",
-    duration_numeric: 0,
+    duration: 0,
     dates: [],
-    year: "",
     absences: undefined,
     promotions: [],
-    settings: {
-        base_cost: "",
-        max_clients: 0
-    }
+
+    start_day: 1,
+    intervall: "weekly",
+    time: 1000*60*18,
+
+    base_cost: "",
+    max_clients: 0
+
 }

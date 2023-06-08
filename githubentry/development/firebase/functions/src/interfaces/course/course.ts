@@ -3,30 +3,29 @@ import { IUserPreview } from "../user/user";
 import IDate from "../utility/date";
 
 export default interface ICourse {
-    readonly id: string;
-    code: string;
-    category: string;
-    target_group: Array<"aqua" | "adult" | "high_diving" | "diverse" | "adolescent" | "elki" | "child">;
-    state: "active" | "in_planning" | "paused" | "complete";
+    readonly id: string; // gen
+    code: string; // template
+    category: string; // template
+    target_group: Array<"aqua" | "adult" | "high_diving" | "diverse" | "adolescent" | "elki" | "child">; // template
+    state: "active" | "planned" | "paused" | "complete"; // template
 
-    pool: IPoolPreview;
-    clients: Array<IUserPreview>;
-    coaches: Array<IUserPreview>;
-    duration: string;
-    duration_numeric: number;
-    dates: Array<IDate>;
-    weekday?: string;
-    weekday_numeric?: number;
-    time?: string;
-    time_numeric?: number;
-    saison?: "august" | "november" | "march";
-    year: string;
+    pool: IPoolPreview; // template
+    clients: Array<IUserPreview>; // template
+    coaches: Array<IUserPreview>; // dyn
 
-    absences: any; // subcollection
-    promotions: Array<boolean>;
+    duration: number; // template
+    start_day: number; // template
+    intervall: string; // template
+    time: number; // template
+    repetitions?: number; // template
+    dates: Array<IDate>; // dyn
 
-    //  Defaulted by Settings
-    settings: ICourseSettings;
+
+    absences: any; // dyn
+    promotions: Array<boolean>; // dyn
+
+    base_cost: string; // template
+    max_clients: number; // template
 
 }
 
@@ -51,7 +50,8 @@ export interface ICoursePublic {
     year: string;
 
     //  Defaulted by Settings
-    settings: ICourseSettings;
+    base_cost: string; 
+
 }
 
 export interface ICoursePreview {

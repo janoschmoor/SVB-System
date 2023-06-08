@@ -21,18 +21,18 @@ service cloud.firestore {
       // USER
 
       function isParent() {
-        return resource.data.parentIds.hasAny([request.auth.uid]);
+        return resource.data.parent_ids.hasAny([request.auth.uid]);
       }
       function isOwner() {
-        return request.auth.uid == resource.data.id;
+        return request.auth.uid == resource.data.auth_id;
       }
       function isOwnerOrAdmin() {
         return isOwner() || hasAccessLevel(2000);
       }
       function canUpdateUserData() {
-        let requiredFields = ['last_update_numeric'];
-        let clientAllowedFields = ['form_of_adress', 'first_name', 'last_name', 'street', 'house_number', 'postal_code', 'city', 'country', 'country_ISO2', 'portrait_url', 'phone_numbers', 'date_of_birth', 'date_of_birth_numeric', 'preffered_language', 'availability', 'invoice_delivery'];
-        let adminAllowedFields = clientAllowedFields.concat(['roles', 'access_level', 'status', 'isSelfConnected', 'discount', 'special_pass', 'special_pass_reduction', 'special_pass_valid_until', 'note', 'email', 'parent', 'children', 'new_messages', 'courses']);
+        let requiredFields = ['last_update'];
+        let clientAllowedFields = ['form_of_adress', 'first_name', 'last_name', 'street', 'house_number', 'postal_code', 'city', 'country', 'country_ISO2', 'portrait_url', 'phone_numbers', 'phone_number', 'date_of_birth', 'preferred_language', 'availability', 'invoice_delivery'];
+        let adminAllowedFields = clientAllowedFields.concat(['roles', 'access_level', 'status', 'linked', 'discount', 'special_pass', 'special_pass_reduction', 'special_pass_valid_until', 'bio', 'email', 'parents', 'children', 'new_messages', 'booked_courses', 'coached_courses']);
         return ((isOwner() || isParent()) && verifyFields(
             requiredFields,
             clientAllowedFields
@@ -45,22 +45,62 @@ service cloud.firestore {
 
       
       allow read: if (isAuthenticated() && (isOwnerOrAdmin() || isParent()));
-      allow create: if isAuthenticated() && hasAccessLevel(2000);
+      allow create: if false;
       allow update: if isAuthenticated() && canUpdateUserData();
-      allow delete: if isAuthenticated() && hasAccessLevel(2000);
+      allow delete: if false;
 
-      match /invoices/{invoiceId} {
-        allow read: if isOwnerOrAdmin();
-        allow write: if hasAccessLevel(2000);
-      }
     }
 
 
+
+    match /courses/{courseId} {
+
+      // COURSES
+
+      allow read: if true;
+      allow create: if false;
+      allow update: if (isAuthenticated() && hasAccessLevel(1000));
+      allow delete: if false;
+    }
+
+    match /pools/{poolId} {
+
+      // POOLS
+
+      allow read: if true;
+      allow create: if false;
+      allow update: if isAuthenticated() && hasAccessLevel(2000);
+      allow delete: if false;
+    }
+
+    match /invoices/{invoiceId} {
+
+      // INVOICES
+
+      function isInvolvedInInvoice() {
+        return (request.auth.uid == resource.data.sender_id || request.auth.uid == resource.data.reciever_id);
+      }
+
+      allow read: if isAuthenticated() && (hasAccessLevel(2000) || isInvolvedInInvoice());
+      allow write: if isAuthenticated() && hasAccessLevel(2000);
+    }
 
     match /SYSTEM/{documentId} {
-      allow read: if documentId == 'default';
-      allow write: if false;
+
+      // SYSTEM
+
+      allow read: if isAuthenticated() && hasAccessLevel(2000);
+      allow write: if isAuthenticated() && hasAccessLevel(2000);
     }
+
+    match /logs/{logId} {
+
+      // LOGS
+
+      allow read: if isAuthenticated() && hasAccessLevel(2000);
+      allow write: if isAuthenticated() && hasAccessLevel(2000);
+    }
+
 
   }
 }

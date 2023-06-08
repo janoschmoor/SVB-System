@@ -14,16 +14,24 @@ export const buildConstraintStringDynamically = (compoundConstraints: any) => {
                 constraintString += `where("${opt.key}", ">=", "${opt.value}"),where("${opt.key}", "<=", "${opt.value}\uf8ff"),`;
                 break;
 
-            case "where":
-                constraintString += `where("${opt.key}", "${opt.operator}", "${opt.value}"),`;
-                break;
+            // case "where":
+            //     constraintString += `where("${opt.key}", "${opt.operator}", "${opt.value}"),`;
+            //     break;
 
             case "date":
-                constraintString += `where("${opt.key}", "${opt.operator}", ${opt.value}),`;
+                constraintString += `where("${opt.key}", "${opt.operator}", new Date('${opt.value.toISOString()}')),`;
                 break;
             
-            case "select":
-                constraintString += `where("${opt.key}", "==", "${opt.value}"),`;
+            // case "select":
+            //     constraintString += `where("${opt.key}", "==", "${opt.value}"),`;
+            //     break;
+
+            case "boolean":
+                constraintString += `where("${opt.key}", "==", ${opt.value}),`;
+                break;
+            
+            case "number":
+                constraintString += `where("${opt.key}", "${opt.operator}", ${opt.value}),`;
                 break;
 
             default:

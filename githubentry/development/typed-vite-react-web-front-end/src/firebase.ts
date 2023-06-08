@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app"
 import { getAuth, connectAuthEmulator } from "firebase/auth"
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
 
 const useEmulator = true;
 
@@ -17,10 +18,12 @@ const app = initializeApp({
 export const auth = getAuth(app);
 export const firestore = getFirestore(app);
 export const functions = getFunctions(app);
+export const storage = getStorage(app);
 export default app;
 
 if (useEmulator) {
     connectFirestoreEmulator(firestore, 'localhost', 8081);
+    connectStorageEmulator(storage, 'localhost', 9199);
     connectFunctionsEmulator(functions, 'localhost', 5001);
     connectAuthEmulator(auth, 'http://localhost:9099');
 }

@@ -7,18 +7,25 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import { lazy, Suspense } from 'react';
-import SystemProvider from './contexts/systemContext';
+import SystemProvider from './contexts/SystemContext';
 
 const HomePage = lazy(() => import('./pages/Home'));
 const LoadingPage = lazy(() => import('./pages/Loading'));
 const TestingGroundPage = lazy(() => import('./pages/Admin/TestingGround'));
 const ErrorPage = lazy(() => import('./pages/ErrorPage'));
 const Admin = lazy(() => import('./pages/Admin'));
-const UsersPage = lazy(() => import('./pages/Admin/Users'));
 const ProfilePage = lazy(() => import('./pages/Profile'));
-
+const InputDevPage = lazy(() => import('./pages/Admin/InputDev'));
+const DataManagerPage = lazy(() => import('./pages/Admin/DataManager'));
+const CourseCreatorPage = lazy(() => import('./pages/Admin/CourseCreator'));
+const TestPage = lazy(() => import("./pages/Test"));
 
 const router = createBrowserRouter([
+  // {
+  //   path: "/new/auth",
+  //   element: <AuthPage />,
+  //   errorElement: <ErrorPage />,
+  // }
   {
     path: "/",
     element: <HomePage />,
@@ -35,11 +42,6 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/admin/users",
-    element: <UsersPage />,
-    errorElement: <ErrorPage />,
-  },
-  {
     path: "/admin/testing_ground",
     element: <TestingGroundPage />,
     errorElement: <ErrorPage />,
@@ -52,6 +54,26 @@ const router = createBrowserRouter([
   {
     path: "/loadingpage",
     element: <LoadingPage />,
+    // errorElement: <ErrorPage />,
+  },
+  {
+    path: "/admin/inputdev",
+    element: <InputDevPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/admin/data-manager",
+    element: <DataManagerPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/admin/course-creator",
+    element: <CourseCreatorPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/test",
+    element: <TestPage />,
     errorElement: <ErrorPage />,
   },
 ]);

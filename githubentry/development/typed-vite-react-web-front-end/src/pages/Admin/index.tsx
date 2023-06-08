@@ -34,7 +34,7 @@ export default function AdminPage() {
                 <Row>
                     <Col sm="8">
                         <Card onClick={() => {
-                                navigate("/admin/testing_ground")
+                                navigate("/admin/data-manager")
                             }}>
                             <CardHeader>
                                 Jüngste Mitglieder

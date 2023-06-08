@@ -11,7 +11,6 @@ export const processSignUp = functions.auth.user().onCreate((user) => {
     return new Promise((resolve, reject) => {
   
       const customClaims = {
-        roles: [],
         access_level: 0
       };
     

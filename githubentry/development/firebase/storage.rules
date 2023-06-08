@@ -1,8 +1,18 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if false;
+
+    function isAuthenticated() {
+      return request.auth != null && request.auth.token.email_verified;
+    }
+    function hasAccessLevel(level) {
+      return request.auth.token.access_level>=level;
+    }
+
+    match /profile/{userId} {
+      allow read: if true;
+      //allow write: if true;
+      allow write: if ((userId != undefined && request.auth.token.customClaims.id == userId) || (isAuthenticated() && hasAccessLevel(2000)));
     }
   }
 }

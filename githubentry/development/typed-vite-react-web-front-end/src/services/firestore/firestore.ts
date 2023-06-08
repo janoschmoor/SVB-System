@@ -1,4 +1,4 @@
-import { collection, getDocs, getDoc, doc, query, where, limit, orderBy, onSnapshot, setDoc, updateDoc, deleteDoc, startAfter } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, query, where, limit, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, startAfter } from "firebase/firestore";
 import { firestore } from "../../firebase";
 import { buildConstraintStringDynamically } from "./util/constraintBuilder";
 
@@ -20,6 +20,7 @@ export function loadCollection({path, options}: {path:string, options: any}) {
 export function loadCollectionSnapshot({path, options, callback, queryId, lastDocument}: {path:string, options: any, callback: Function, queryId: number, lastDocument?: any}) {
     var collectionRef = collection(firestore, path);
     var constraintString = buildConstraintStringDynamically(options)
+    console.log(constraintString)
     const q = lastDocument ? eval(`query(collectionRef, ${constraintString}, startAfter(lastDocument))`) : eval(`query(collectionRef, ${constraintString})`)
     return onSnapshot(q, (querySnapshot: any) => {
         callback(querySnapshot, queryId);
@@ -35,8 +36,8 @@ export function loadDocumentSnapshot(path: string, callback: any) {
 }
 
 
-export function setDocument(path: string, data: any) {
-    return setDoc(doc(firestore, path), data);
+export function addDocument(path: string, data: any) {
+    return addDoc(collection(firestore, path), data);
 }
 export function updateDocument(path: string, data: any) {
     return updateDoc(doc(firestore, path), data);

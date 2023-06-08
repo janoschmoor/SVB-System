@@ -1,21 +1,20 @@
-import { ICoursePreview } from "../course/course";
-import { IUserPreview } from "../user/user";
 
 export default interface IInvoice {
     readonly id: string;
-    state: "pending" | "complete" | "failed" | "canceled" | "issued";
+    status: "complete" | "failed" | "cancelled" | "open" | "partial";
     title: string;
 
-    course: ICoursePreview;
-    client: IUserPreview;
-    payer: IUserPreview;
-    delivery: "email" | "post";
-
-    amount: string;
-    currency: string;
-
-    has_been_paid: boolean;
-    date_of_payment: string;
+    sender_id: string;
+    reciever_id: string;
+    product_id: string;
+    product_type: string;
+    created_at: Date;
+    last_updated: Date;
+    amount: number,
+    amount_paid: number,
+    currency: "CHF" | "EUR" | "USD",
+    action: "book-course" | "unbook-course",
+    
 }
 
 export interface IInvoicePreview {

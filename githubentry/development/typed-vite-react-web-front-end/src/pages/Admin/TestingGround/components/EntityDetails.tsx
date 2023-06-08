@@ -1,7 +1,8 @@
-import { JSXElementConstructor, useEffect, useState } from "react";
-import { Modal, Form, Button, Tabs, Tab, ModalHeader, ModalTitle, Row, Col, Alert, Container, TabPane, ModalFooter, FormGroup, FormLabel, FormControl } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Modal, Form, Button, Tabs, Tab, ModalHeader, ModalTitle, Row, Col, Alert, Container, TabPane, ModalFooter, FormGroup, FormLabel, FormControl, FormSelect } from "react-bootstrap";
 import { Pen, Unlock } from "react-bootstrap-icons";
 import { useSystem } from "../../../../contexts/systemContext";
+import { updateDocument } from "../../../../services/firestore/firestore";
 
 
 export default function EntityDetails(props: {type: string, entity: any}) {
@@ -17,17 +18,37 @@ export default function EntityDetails(props: {type: string, entity: any}) {
         console.log(SystemState)
     }, [SystemState])
     
-    const Input = (key: string, systemstate: any) => {
-        if (!systemstate) return <p>also no</p>
-        var prot = eval(`systemstate.query.${props.type}.keys.find((k: any) => k.key == ${key})`)
-        return prot ?
-            (
-                <FormGroup as={Col}>
-                    <FormLabel>Vorname</FormLabel>
-                    <FormControl disabled={!editing} defaultValue={props.entity.first_name} name="firstName" placeholder="Vorname" required />
-                </FormGroup>
-            )
-        :  <p>no</p>
+    const Input = (properties: {key: string, systemstate: any, colsizesm?: number | undefined, feedback?: string, type: string}) => {
+        if (!properties.systemstate) return <Alert variant="danger">Systemdata not available</Alert>
+        var prot = eval(`properties.systemstate.SystemState.query.${props.type}`).keys.find((k: any) => k.key == properties.key)
+
+        if (prot) {
+            switch (prot.type) {
+                case "text":
+                    return <FormGroup as={Col} sm={properties.colsizesm}>
+                                <FormLabel>{prot.disp}</FormLabel>
+                                <FormControl disabled={!editing} defaultValue={eval(`props.entity.${prot.key}`)} type={properties.type} name={prot.key} placeholder={prot.disp} required />
+                                {properties.feedback ? <FormControl.Feedback type="invalid">{properties.feedback}</FormControl.Feedback>:""}
+                            </FormGroup>
+                case "select":
+                    return <FormGroup as={Col} sm={properties.colsizesm}>
+                                <FormLabel>{prot.disp}</FormLabel>
+                                <FormSelect disabled={!editing} value={eval(`props.entity.${prot.key}`)} name={prot.key} placeholder={prot.disp} required>
+                                    <>
+                                        {
+                                            prot.selectOptions.map((option: any, index: number) => {
+                                                return <option key={index} value={option.key}>{option.disp}</option>
+                                            })
+                                        }
+                                    </>
+                                </FormSelect>
+                            </FormGroup>
+                default:
+                    <Container fluid><Alert variant="danger">Type not found</Alert></Container>
+            }
+        }
+
+        return <Container fluid><Alert variant="danger">No matching key</Alert></Container>
     }
     
     const onSubmit = (e:any) => {
@@ -46,14 +67,26 @@ export default function EntityDetails(props: {type: string, entity: any}) {
         setValidated(true);
     }
     const uploadEntityData = (form: any) => {
+        var iter = form.keys();
+        var update: any = {
+            last_update_numeric: Date.now()
+        }
+        let result: any = iter.next();
+        while (!result.done) {
 
-        console.log(form)
-        // const updates = compileUpdates(form, props.entity);
+            update[result.value] = form.get(result.value)
+            result = iter.next();
+        }
+        
         // var userUpdate = {...props.entity, ...updates};
 
-        // updateUser({user: userUpdate}).then((data) => {
-            
-        // }).catch((err) => console.error(err.message))
+        updateUser({user: update}).then((data) => {
+            console.log("happy days")
+        }).catch((err) => console.error(err))
+    }
+
+    const updateUser = (obj: any) => {
+        return updateDocument("users/"+props.entity.id, obj.user);
     }
 
     const renderUser = () => {
@@ -73,39 +106,52 @@ export default function EntityDetails(props: {type: string, entity: any}) {
                 <Tab eventKey="personal" title="Person">
                     <Container fluid>
                         <Row className="mb-1">
-                            {Input("last_name", SystemState)}
-                            
+                            {Input({
+                                key: "first_name",
+                                type: "text",
+                                systemstate: SystemState,
+                            })}
 
-                            
-
-                            <Form.Group as={Col} controlId="formGridLastName">
-                                <Form.Label>Nachname</Form.Label>
-                                <Form.Control disabled={!editing} defaultValue={props.entity.last_name} name="lastName" placeholder="Nachname" required />
-                            </Form.Group>
+                            {Input({
+                                key: "last_name",
+                                type: "text",
+                                systemstate: SystemState,
+                            })}
                         </Row>
                         <Row className="mb-1">
-                            <Form.Group sm="3" as={Col} controlId="formGridFormOfAdress">
-                                <Form.Label>Anrede</Form.Label>
-                                <Form.Control disabled={!editing} defaultValue={props.entity.form_of_adress} name="formOfAdress" placeholder="Anrede" required />
-                            </Form.Group>
-                            <Form.Group sm="9" as={Col} controlId="formGridEmail">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control disabled={!editing} defaultValue={props.entity.email} name="email" placeholder="Email" type="email" required />
-                                <Form.Control.Feedback type="invalid">Email ist ungültig</Form.Control.Feedback>
-                            </Form.Group>
+                            {Input({
+                                key: "form_of_address",
+                                type: "text",
+                                systemstate: SystemState,
+                                colsizesm: 3,
+                            })}
+                            {Input({
+                                key: "email",
+                                type: "email",
+                                systemstate: SystemState,
+                                colsizesm: 9,
+                                feedback: "Email ist ungültig",
+                            })}
                         </Row>
                         <Row className="mb-1">
-                            <Form.Group sm="9" as={Col} controlId="formGridPhoneNumbers">
-                                <Form.Label>Telefonnummer</Form.Label>
-                                <Form.Control disabled={!editing} defaultValue={props.entity.phone_numbers.default} name="phoneNumbers" placeholder="Telefonnummer" required/>
-                            </Form.Group>
-                            <Form.Group sm="3" as={Col} controlId="formGridPrefferedLanguage">
+                            {Input({
+                                key: "phone_number",
+                                type: "text",
+                                systemstate: SystemState,
+                                colsizesm: 9,
+                            })}
+                            {Input({
+                                key: "preffered_language",
+                                type: "text",
+                                systemstate: SystemState,
+                                colsizesm: 3,
+                            })}
+                            {/* <Form.Group sm="3" as={Col} controlId="formGridPrefferedLanguage">
                                 <Form.Label>Sprache</Form.Label>
                                 <Form.Select disabled={!editing} defaultValue={props.entity.preffered_language} name="prefferedLanguage" placeholder="Sprache">
                                     {["d", "f", "i", "e"].map(s => {return (<option key={s}>{s}</option>)})}
                                 </Form.Select>
-                                {/* <Form.Control disabled={!editing} defaultValue={props.entity.status} name="status" placeholder="Status" required /> */}
-                            </Form.Group>
+                            </Form.Group> */}
                         </Row>
                         <Row className="mb-1">
                             <Form.Group as={Col} controlId="formGridPortrait">
@@ -223,10 +269,10 @@ export default function EntityDetails(props: {type: string, entity: any}) {
                 <ModalTitle>
                     {
                         editing ? 
-                            <Button onClick={() => {setEditing(!editing)}} variant="outline-dark" className="mr-4"><Unlock/></Button> 
+                            <Button onClick={() => {setEditing(!editing)}} variant="outline-dark" className="me-4"><Unlock/></Button> 
                         :
-                            <Button onClick={() => {setEditing(!editing)}} variant="outline-dark" className="mr-4"><Pen/></Button>
-                    } {" "}
+                            <Button onClick={() => {setEditing(!editing)}} variant="outline-dark" className="me-4"><Pen/></Button>
+                    }
                     Inspektor
                 </ModalTitle>
             </ModalHeader>
