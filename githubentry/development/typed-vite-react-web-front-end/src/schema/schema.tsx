@@ -1,5 +1,7 @@
 import { Button } from "react-bootstrap";
 import { ArrowClockwise, EnvelopeAt, Eye, PhoneFill, PlusLg, TelephoneOutbound } from "react-bootstrap-icons";
+import { CreateUser } from "../services/functions";
+import { useNavigate } from 'react-router-dom';
 
 const userPreviewSchema = [
     {
@@ -95,8 +97,21 @@ const SCHEMA = [
                 actions: [
                     {
                         render: (props: {onClick?: Function}) => {
+                            const navigate = useNavigate();
                             return (
-                                <Button className="w-100" variant="outline-primary" onClick={(e: any) => {props.onClick ? props.onClick(e) : console.log("no onClick defined")}}>Nutzer hinzufügen</Button>
+                                <Button className="w-100" variant="outline-primary" onClick={(e: any) => {
+                                    // call firebase function to create new user
+                                    CreateUser().then((res: any) => {
+                                        console.log(res);
+                                        navigate('/admin/data-manager', { state: { requestedCollection: "users", constraint: {
+                                            type: "text",
+                                            value: res.data.data.id,
+                                            key: "id",
+                                        } } });
+                                    }).catch((err) => {
+                                        console.error(err);
+                                    })
+                                }}>Nutzer hinzufügen</Button>
                             )
                         },
                         id: "create",
@@ -155,6 +170,7 @@ const SCHEMA = [
                                 display: "Tätigkeiten",
                                 type: "array",
                                 template: "",
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -167,40 +183,45 @@ const SCHEMA = [
                                 key: "is_admin",
                                 display: "Admin",
                                 type: "boolean",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "is_coach",
                                 display: "Schwimmlehrer",
                                 type: "boolean",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "is_client",
                                 display: "Kunde",
                                 type: "boolean",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "access_level",
                                 display: "Zugriffslevel",
                                 type: "number",
                                 minViewLevel: 2000,
+                                disableChange: true,
                             },
                             {
                                 key: "created_at",
                                 display: "Erstellt",
                                 type: "date",
-                                minEditLevel: 2000,
+                                disableChange: true,
                             },
                             {
                                 key: "last_update",
                                 display: "Zuletzt aktualisiert",
                                 type: "date",
-                                minEditLevel: 2000,
+                                disableChange: true,
                                 timeMode: "delta",
                             },
                             {
                                 key: "status",
                                 display: "Status",
                                 type: "select",
+                                minEditLevel: 2000,
                                 options: [
                                     {key: "active", display: "Aktiv", variant: "success"},
                                     {key: "inactive", display: "Inaktiv", variant: "warning"},
@@ -221,6 +242,7 @@ const SCHEMA = [
                                 display: "Rabatt",
                                 type: "object",
                                 optional: true,
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "special_pass_name",
@@ -319,6 +341,7 @@ const SCHEMA = [
                                 key: "email",
                                 display: "E-Mail",
                                 type: "email",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "preferred_language",
@@ -336,6 +359,7 @@ const SCHEMA = [
                                 display: "Eltern",
                                 type: "array",
                                 template: undefined,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -352,6 +376,7 @@ const SCHEMA = [
                                 type: "array",
                                 template: "",
                                 minViewLevel: 2000,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -365,6 +390,7 @@ const SCHEMA = [
                                 display: "Kinder",
                                 type: "array",
                                 template: undefined,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -381,6 +407,7 @@ const SCHEMA = [
                                 type: "array",
                                 template: "",
                                 minViewLevel: 2000,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -394,6 +421,7 @@ const SCHEMA = [
                                 display: "Gebuchte Kurse",
                                 type: "array",
                                 template: undefined,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -410,6 +438,7 @@ const SCHEMA = [
                                 type: "array",
                                 template: "",
                                 minViewLevel: 2000,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -423,6 +452,7 @@ const SCHEMA = [
                                 display: "Geleitete Kurse",
                                 type: "array",
                                 template: undefined,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -439,6 +469,7 @@ const SCHEMA = [
                                 type: "array",
                                 template: "",
                                 minViewLevel: 2000,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -491,11 +522,13 @@ const SCHEMA = [
                                 key: "code",
                                 display: "Code",
                                 type: "string",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "category",
                                 display: "Kategorie",
                                 type: "select",
+                                minEditLevel: 2000,
                                 options: [
                                     { key: "aqua", display: "Aqua", variant: "primary" },
                                     { key: "adult", display: "Erwachsen", variant: "primary" },
@@ -511,6 +544,7 @@ const SCHEMA = [
                                 display: "Zielgruppe",
                                 type: "array",
                                 template: "aqua",
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -532,6 +566,7 @@ const SCHEMA = [
                                 key: "state",
                                 display: "Status",
                                 type: "select",
+                                minEditLevel: 2000,
                                 options: [
                                     { key: "planned", display: "Geplant", variant: "primary" },
                                     { key: "active", display: "Aktiv", variant: "primary" },
@@ -543,6 +578,7 @@ const SCHEMA = [
                                 key: "pool",
                                 display: "Schwimmbad",
                                 type: "object",
+                                minEditLevel: 2000,
                                 properties: poolPreviewSchema,
                             },
                             {
@@ -551,6 +587,7 @@ const SCHEMA = [
                                 type: "array",
                                 template: undefined,
                                 minViewLevel: 1000,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -566,6 +603,7 @@ const SCHEMA = [
                                 display: "Schwimmlehrer Liste",
                                 type: "array",
                                 template: undefined,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -580,33 +618,39 @@ const SCHEMA = [
                                 key: "duration",
                                 display: "Dauer",
                                 type: "number",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "start_day",
                                 display: "Start Tag",
                                 type: "number",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "intervall",
                                 display: "Intervall",
                                 type: "string",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "time",
                                 display: "Zeit",
                                 type: "number",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "repetitions",
                                 display: "Trainings",
                                 type: "number",
                                 optional: true,
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "dates",
                                 display: "Kursdaten",
                                 type: "array",
                                 template: null,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -619,12 +663,14 @@ const SCHEMA = [
                                 key: "absences",    
                                 display: "Abwesenheiten",
                                 type: "object",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "promotions",
                                 display: "Beförderungen",
                                 type: "array",
                                 template: false,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -637,11 +683,13 @@ const SCHEMA = [
                                 key: "base_cost",
                                 display: "Grundkosten",
                                 type: "number",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "max_clients",
                                 display: "Maximale Teilnehmer",
                                 type: "number",
+                                minEditLevel: 2000,
                             },
                         ]
                     },
@@ -672,16 +720,19 @@ const SCHEMA = [
                                 key: "id",
                                 type: "string",
                                 display: "ID",
+                                disableChange: true,
                             },
                             {
                                 key: "name",
                                 type: "string",
                                 display: "Name",
+                                minEditLevel: 2000,
                             },
                             {
                                 key: "location",
                                 type: "object",
                                 display: "Ort",
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "lat",
@@ -700,6 +751,7 @@ const SCHEMA = [
                                 type: "object",
                                 display: "Kontakt",
                                 preview: "users",
+                                minEditLevel: 2000,
                                 properties: userPreviewSchema,
                             },
                             {
@@ -707,6 +759,7 @@ const SCHEMA = [
                                 type: "array",
                                 display: "Kurse",
                                 template: undefined,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",
@@ -722,6 +775,7 @@ const SCHEMA = [
                                 type: "array",
                                 display: "Verfügbarkeit",
                                 template: undefined,
+                                minEditLevel: 2000,
                                 properties: [
                                     {
                                         key: "**",

@@ -11,12 +11,8 @@ export default function DataManagerComponent(props: {
 }) {
 
     const { state } = useLocation();
-    if (state) {
-        const { requestedCollection, requestedId } = state;
-        console.log(requestedCollection, requestedId);
-    }
-    
-    const [ collection, setCollection ] = useState(props.defaultCollection);
+
+    const [ collection, setCollection ] = useState(state && state.requestedCollection ? state.requestedCollection : props.defaultCollection);
 
     const { currentUser } = useAuth();
     if (!currentUser) {
@@ -38,7 +34,7 @@ export default function DataManagerComponent(props: {
                     dbProperties?.map((element: any, index: number) => {
                         return (
                             <Tab key={index} eventKey={element.key} title={element.display}>
-                                <CollectionQueryTableComponent active={element.key == collection} settings={props.settings} collection={element.key} />
+                                <CollectionQueryTableComponent active={element.key == collection} settings={state ? {...props.settings, queryConstructor: state.constraint} : props.settings} collection={element.key} />
                             </Tab>
                         )
                     })

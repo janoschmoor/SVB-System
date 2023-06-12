@@ -31,8 +31,45 @@ service cloud.firestore {
       }
       function canUpdateUserData() {
         let requiredFields = ['last_update'];
-        let clientAllowedFields = ['form_of_adress', 'first_name', 'last_name', 'street', 'house_number', 'postal_code', 'city', 'country', 'country_ISO2', 'portrait_url', 'phone_numbers', 'phone_number', 'date_of_birth', 'preferred_language', 'availability', 'invoice_delivery'];
-        let adminAllowedFields = clientAllowedFields.concat(['roles', 'access_level', 'status', 'linked', 'discount', 'special_pass', 'special_pass_reduction', 'special_pass_valid_until', 'bio', 'email', 'parents', 'children', 'new_messages', 'booked_courses', 'coached_courses']);
+        //let clientAllowedFields = ['form_of_adress', 'first_name', 'last_name', 'street', 'house_number', 'postal_code', 'city', 'country', 'country_ISO2', 'portrait_url', 'phone_numbers', 'phone_number', 'date_of_birth', 'preferred_language', 'availability', 'invoice_delivery'];
+        //let adminAllowedFields = clientAllowedFields.concat(['roles', 'access_level', 'status', 'linked', 'discount', 'special_pass', 'special_pass_reduction', 'special_pass_valid_until', 'bio', 'email', 'parents', 'children', 'new_messages', 'booked_courses', 'coached_courses']);
+        let clientAllowedFields = [
+          'bio',
+          'form_of_adress',
+          'first_name',
+          'last_name',
+          'street',
+          'house_number',
+          'postal_code',
+          'city',
+          'district',
+          'country',
+          'country_ISO2',
+          'photo_url',
+          'phone_number',
+          'date_of_birth',
+          'last_update',
+          'preferred_language',
+          'invoice_delivery',
+        ];
+        let adminAllowedFields = clientAllowedFields.concat([
+          'auth_id',
+          'roles',
+          'is_admin',
+          'is_coach',
+          'is_client',
+          'status',
+          'sallary',
+          'email',
+          'parents',
+          'parent_ids',
+          'children',
+          'child_ids',
+          'booked_courses',
+          'booked_course_ids',
+          'coached_courses',
+          'coached_course_ids',
+        ]);
         return ((isOwner() || isParent()) && verifyFields(
             requiredFields,
             clientAllowedFields

@@ -123,7 +123,7 @@ export default function PhotoURLTemplate(props:
             const canvas = document.createElement("canvas");
 
             // Set the canvas dimensions to the desired size
-            const width = 50;
+            const width = 512;
             const height = (img.height / img.width) * width;
             canvas.width = width;
             canvas.height = height;
@@ -135,14 +135,41 @@ export default function PhotoURLTemplate(props:
             // Convert the canvas to a Blob
             canvas.toBlob(async (blob) => {
                 if (!blob) { return; }
-                // Upload the resized image to Firebase Storage
-                await uploadBytesResumable(fileRef, blob);
+                // Upload the resized image to Firebase Storage and update setUploadProgress state
+                const uploadTask = uploadBytesResumable(fileRef, blob);
+                uploadTask.on(
+                    "state_changed",
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setUploadProgress(progress);
+                    },
+                    (error) => console.log(error),
+                    () => {
+                        setUploadProgress(0)
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            props.onChange({ change: downloadURL, path: props.path });
+                        }
+                    )}
+                )
 
-                // Get the download URL for the resized image
-                const downloadURL = await getDownloadURL(fileRef);
+                
+                
+                // await uploadBytesResumable(fileRef, blob).on(
+                //     "state_changed",
+                //     (snapshot) => {
+                //         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                //         setUploadProgress(progress);
+                //     },
+                //     (error) => console.log(error),
+                //     () => setUploadProgress(0)
+                // )
 
-                // Update the data with the resized image URL
-                props.onChange({ change: downloadURL, path: props.path });
+
+                // // Get the download URL for the resized image
+                // const downloadURL = await getDownloadURL(fileRef);
+
+                // // Update the data with the resized image URL
+                // props.onChange({ change: downloadURL, path: props.path });
             }, "image/jpeg", 0.9);
         }
     };
@@ -197,31 +224,6 @@ export default function PhotoURLTemplate(props:
 
     // RENDER
 
-    return (
-        <FormGroup>
-            {!props.config.disableLabel && <FormLabel>{props.schema.title}</FormLabel>}
-            <InputGroup>
-                <FormControl
-                    type="text"
-                    value={downloadURL || localData || defaultData}
-                    onChange={(event) => {
-                        setDownloadURL("");
-                        props.onChange(event.target.value);
-                    }}
-                    onBlur={validate}
-                    disabled={props.config.disableEditable || !props.config.editMode}
-                />
-                <InputGroup>
-                    <Button variant="outline-secondary" onClick={handleFileUpload} disabled={!selectedFile}>Upload</Button>
-                    <FormLabel htmlFor="photo-upload" className="btn btn-outline-secondary">Choose</FormLabel>
-                    <FormControl type="file" id="photo-upload" onChange={handleFileSelection} accept="image/*" />
-                </InputGroup>
-            </InputGroup>
-            {uploadProgress > 0 && <ProgressBar now={uploadProgress} label={`${uploadProgress.toFixed(0)}%`} />}
-            {!props.config.disableEditable && <FormText className="text-muted">{props.schema.description}</FormText>}
-        </FormGroup>
-    );
-
     // SEARCH
     if (props.data === undefined) {
         return (
@@ -259,44 +261,33 @@ export default function PhotoURLTemplate(props:
     // EDIT
     if (editMode) {
         return (
-            <div>
-                <Form noValidate onSubmit={(e) => {e.preventDefault(); tryEndEditMode()}}>
-                    <FormGroup>
-                        <InputGroup>
-                            <InputGroup.Text>{getLabel()}</InputGroup.Text>
-                            <FormControl
-                                type="text"
-                                disabled={props.schema.disableChange}
-                                defaultValue={localData}
-                                placeholder={initialData}
-                                onChange={(e) => onChange(e.target.value)}
-                                isValid={inputIsValid && hasChanges}
-                                isInvalid={!inputIsValid && hasChanges}
-                                />
-                            {
-                                <Button disabled={!hasChanges && inputIsValid} onClick={() => {tryEndEditMode()}} variant={"primary"}>
-                                    <ArrowRight></ArrowRight>
-                                </Button>
-                            }
-                                
-                            {!isValid ? <FormControl.Feedback type="invalid">Texteingabe erfordert</FormControl.Feedback>: null}
-                            
-                        </InputGroup>
-                    </FormGroup>
-                </Form>
-            </div>
+            <FormGroup>
+                {!props.config.disableLabel && <FormLabel>{getLabel()}</FormLabel>}
+                <InputGroup>
+                    <img onClick={() => {tryEnterEditMode()}} style={{width: "100%", height: "auto", borderRadius: "2em"}} src={localData}></img>
+                    {uploadProgress > 0 && <ProgressBar now={uploadProgress} label={`${uploadProgress.toFixed(0)}%`} />}
+                    <InputGroup className="w-100">
+                        <FormControl type="file" id="photo-upload" onChange={handleFileSelection} accept="image/*" />
+                        <Button variant="primary" onClick={handleFileUpload} disabled={!selectedFile}>Upload</Button>
+                    </InputGroup>
+                </InputGroup>
+            </FormGroup>
         );
     }
 
     // VIEW
 
+    if (localData === "") {
+        return <p onClick={() =>{tryEnterEditMode()}}>Kein Bild vorhanden</p>
+    }
+
     return (
-        <div onClick={(e: any) => {
-            tryEnterEditMode();
-            }}>
-            <Img src={localData} className={"w-100"} />
-            {getLabel()}{localData.length > 0 ? localData : <i style={{color: "gray"}}>Keine Angabe</i>}
-        </div>
+        // <img style={{width: "100px", height: "100px", borderRadius: "10%"}} src={localData}></img>
+        // display the image but set the size to a small profile picture style image with rounded corners and maintain the aspect ratio
+        
+        <img onClick={() => {tryEnterEditMode()}} style={{width: "100%", height: "auto", borderRadius: "2em"}} src={localData}></img>
+        
+
     );
     
 }

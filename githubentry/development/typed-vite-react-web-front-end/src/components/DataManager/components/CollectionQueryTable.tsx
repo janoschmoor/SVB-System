@@ -26,8 +26,6 @@ export default function CollectionQueryTableComponent(props:
         active: boolean;
     }) {
 
-        const [ testData, setTestData ] = useState<any>(null)
-
         const settings = Object.assign({
             limit: 10,
             allowLoadMore: true,
@@ -62,6 +60,13 @@ export default function CollectionQueryTableComponent(props:
         const [containerRef, isVisible] = useElementOnScreen({root: null, rootMargin: "0px", threshold: 1.0});
 
         const [ toastController, setToastController ] = useState<any>({show: false});
+
+        useEffect(() => {
+            if (props.active && props.settings.queryConstructor) {
+                setSelectedTableColumn(0);
+                setQueryConstraint(props.settings.queryConstructor);
+            }
+        }, [props.settings])
 
         useEffect(() => {
             // collectionProperty = getProperty("db/"+props.collection);
@@ -225,47 +230,6 @@ export default function CollectionQueryTableComponent(props:
             </Popover>
         )
 
-        // const renderActionColumn = (entity: any) => {
-        //     switch (props.collection) {
-        //         case "users":
-        //             return (
-        //                 <td>
-        //                     {
-        //                         entity.phone_number && entity.phone_number != "" ?
-        //                                 <Button variant='outline-success' onClick={(e: any) => {
-        //                                     e.preventDefault();
-        //                                     e.stopPropagation();
-        //                                     window.open(`tel:${entity.phone_number}`);
-        //                                 }} size="sm"><TelephoneOutbound /></Button>
-        //                             :
-        //                                 <Button variant='outline-secondary' size="sm"><Chat /></Button>
-
-        //                     }
-        //                 </td>
-        //             )
-        //         case "courses":
-        //             return (
-        //                 <td>
-        //                     <Button variant='outline-success' onClick={(e: any) => {
-        //                         e.preventDefault();
-        //                         e.stopPropagation();
-        //                         console.log("book this course", entity.id)
-        //                         ManipulateCourse({action: "book", courseId: entity.id}).then((data:any) => console.log(data)).catch((e:any) => console.error(e));
-        //                     }} size="sm"><CartPlus /></Button>
-        //                     {(entity.clients.find((entity: any) => entity.id == currentUser?.uid)) ? <Button variant='outline-danger' onClick={(e: any) => {
-        //                         e.preventDefault();
-        //                         e.stopPropagation();
-        //                         console.log("unbook this course", entity.id)
-        //                         ManipulateCourse({action: "unbook", courseId: entity.id}).then((data:any) => console.log(data)).catch((e:any) => console.error(e));
-        //                     }} size="sm"><CartX /></Button> : null}
-        //                 </td>
-        //             )
-
-        //         default:
-        //             return (<td></td>)
-        //     }
-        // }
-
         return (
             <>
 
@@ -288,41 +252,6 @@ export default function CollectionQueryTableComponent(props:
                     }
 
                     <Col sm={3}>
-                        {/* <div className="p-1 justify-content-between align-items-end d-flex">
-                            <Button className="w-100 me-2" disabled={loading} onClick={(e: any) => {
-                                // var form = CompileForm({isSearch: true, changesOnly: false, formId: `${props.collection}-query`})
-                                // loadEntities(form);
-                                
-                                // get operator, key, value of search field
-                                const field = tableHeadKeys ? tableHeadKeys[selectedTableColumn].key : undefined;
-                                const operator = "desc";
-                                const value = searchValue;
-                                if (!field || !operator || !value) return;
-                                loadEntities({field: field, operator: operator, value: value});
-
-                            }}>{`(${queriedEntities.length})`} Einträge laden</Button>
-                            <Button variant="outline-danger" disabled={loading} onClick={(e: any) => {
-                                reset();
-                            }}><ArrowRepeat /></Button>
-
-                        </div>
-                        <div>
-                            <Button onClick={() => {
-                                const template = getTemplate(props.collection)?.();
-                                template ? setSelectedEntity(template): null;
-                                template ? setShowDetails(true): null;
-                                template ? setSelectedEntityIsNew(true): null;
-                            }} size="sm" className="w-100 m-1" variant="outline-primary">Neu</Button>
-                        </div> */}
-                        {/* <div className="justify-content-between align-items-end d-flex">
-                            {
-                                collectionProperty?.actions?.filter((action: any) => action.id == "refresh").map((action: {id: string, render: Function}) => {
-                                    return <action.render key={action.id} onClick={() => {
-                                        loadEntities();
-                                    }}/>
-                                })
-                            }
-                        </div> */}
                         <div className="justify-content-between d-flex">
                             {
                                 collectionProperty?.actions?.filter((action: any) => action.id != "refresh").map((action: {id: string, render: Function}) => {
@@ -355,7 +284,21 @@ export default function CollectionQueryTableComponent(props:
                                                             () => {
                                                                 sortDirection == "asc" ? setSortDirection("desc") : setSortDirection("asc");
                                                             }
-                                                        } />
+                                                        } onDelete={(e: any) => {
+                                                            e.stopPropagation();
+                                                            if (selectedTableColumn >= index) {
+                                                                setSelectedTableColumn(selectedTableColumn-1);
+                                                            }
+                                                            if (selectedEntity >= index) {
+                                                                setSelectedEntity(selectedEntity-1);
+                                                            }
+                                                            setTableHeadKeys((p: any) => {
+                                                                var copy = [...p]
+                                                                copy.splice(index, 1);
+                                                                return copy;
+                                                            })
+
+                                                        }} />
                                                 </th>
                                             :
                                             <th key={element.key}><Alert variant="warning">Laden...</Alert></th>
